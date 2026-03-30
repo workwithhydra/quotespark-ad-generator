@@ -4,17 +4,17 @@ import { useState } from 'react';
 import { GenerateRequest } from '@/lib/types';
 
 const ANGLES = [
-  '',
-  'Revenue Math',
-  'The Ceiling / Referral Cap-Out',
-  'Volume Reframe',
-  'System vs. Hustle',
-  'Testimonial / Client Quote',
-  'Diagnostic / Bottleneck ID',
-  'Exclusivity / Territory',
-  'Speed to Scale',
-  'Second Engine',
-  'Capacity Unlock',
+  { value: '', label: 'Diversify across angles' },
+  { value: 'Revenue Math — Show the exact math to $1.1M/month. Jobs x ticket x close rate. Let the numbers sell.', label: 'Revenue Math' },
+  { value: 'The Ceiling / Referral Cap-Out — "Referrals got you to $400K/month. They won\'t get you to $1.1M." Name the plateau.', label: 'The Ceiling / Referral Cap-Out' },
+  { value: 'Volume Reframe — "You don\'t need to close better. You need 3x the estimates." Reframe the bottleneck.', label: 'Volume Reframe' },
+  { value: 'System vs. Hustle — "The roofers hitting $1M+ months built a system. They\'re not outworking you — they\'re out-engineering you."', label: 'System vs. Hustle' },
+  { value: 'Testimonial / Client Quote — Bold quote from a roofing company owner who scaled with QuoteSpark.', label: 'Testimonial / Client Quote' },
+  { value: 'Diagnostic / Bottleneck ID — "You don\'t have a sales problem. You have a lead volume problem." Identify what\'s actually holding them back.', label: 'Diagnostic / Bottleneck ID' },
+  { value: 'Exclusivity / Territory — "Your market. Your leads. One roofer per territory. Once it\'s claimed, it\'s gone."', label: 'Exclusivity / Territory' },
+  { value: 'Speed to Scale — "First leads in 7 days. Not 7 months of brand-building." Speed without hype.', label: 'Speed to Scale' },
+  { value: 'Second Engine — "Your first engine (referrals) got you here. Your second engine (paid acquisition) gets you to $1.1M."', label: 'Second Engine' },
+  { value: 'Capacity Unlock — "You have the crews. You have the closers. You don\'t have enough at-bats." Frame lead gen as unlocking capacity they already have.', label: 'Capacity Unlock' },
 ];
 
 interface GenerateFormProps {
@@ -54,10 +54,9 @@ export default function GenerateForm({
           onChange={(e) => setAngleFocus(e.target.value)}
           className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
         >
-          <option value="">Diversify across angles</option>
-          {ANGLES.filter(Boolean).map((angle) => (
-            <option key={angle} value={angle}>
-              {angle}
+          {ANGLES.map((angle) => (
+            <option key={angle.label} value={angle.value}>
+              {angle.label}
             </option>
           ))}
         </select>
