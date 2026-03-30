@@ -23,7 +23,13 @@ export default function Home() {
         body: JSON.stringify(request),
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(text || 'Server returned an invalid response');
+      }
 
       if (!res.ok) {
         throw new Error(data.error || 'Generation failed');

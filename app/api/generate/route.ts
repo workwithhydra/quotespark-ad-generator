@@ -4,12 +4,18 @@ import { AdConcept, GenerateRequest } from '@/lib/types';
 
 export const maxDuration = 30;
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
 export async function POST(request: Request) {
   try {
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return Response.json(
+        { error: 'ANTHROPIC_API_KEY is not set. Add it in Vercel project settings → Environment Variables, then redeploy.' },
+        { status: 500 }
+      );
+    }
+
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
     const body: GenerateRequest = await request.json();
     const { angleFocus, proofPoints, conceptCount = 5 } = body;
 
