@@ -23,17 +23,19 @@ export default function Home() {
         body: JSON.stringify(request),
       });
 
-      const text = await res.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch {
-        throw new Error(text || 'Server returned an invalid response');
+      if (!res.ok) {
+        const text = await res.text();
+        let msg = 'Generation failed';
+        try { msg = JSON.parse(text).error || msg; } catch { msg = text || msg; }
+        throw new Error(msg);
       }
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Generation failed');
-      }
+      const text = (await res.text()).trim();
+      const jsonStart = text.lastIndexOf('{');
+      if (jsonStart === -1) throw new Error('No response data received');
+
+      const data = JSON.parse(text.slice(jsonStart));
+      if (data.error) throw new Error(data.error);
 
       setConcepts(data.concepts);
     } catch (err) {
