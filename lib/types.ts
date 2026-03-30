@@ -3,16 +3,18 @@ export interface AdConcept {
   angle: string;
   awareness_level: string;
   text_overlay: {
+    qualifier: string;
     headline: string;
     subhead: string;
-    cta_badge: string;
-    proof_element: string;
+    context_line: string;
   };
   style: {
     headline_accent_words: string[];
-    background_type: 'solid' | 'gradient' | 'texture';
+    subhead_color: 'gray' | 'yellow' | 'white';
+    background_type: 'warm_spotlight' | 'gradient' | 'solid';
     background_primary: string;
     background_secondary?: string;
+    qualifier_bg: 'red' | 'dark';
   };
   gemini_json: GeminiPrompt;
 }

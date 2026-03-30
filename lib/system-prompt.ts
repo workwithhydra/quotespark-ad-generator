@@ -154,6 +154,41 @@ QuoteSpark is a roofing lead generation agency (Hydra Holdings portfolio company
 
 ---
 
+## WINNING AD STYLE — FOLLOW THIS EXACTLY
+
+The best-performing QuoteSpark ads follow this specific visual pattern. Every ad you generate must match this style:
+
+### Structure (4 elements, top to bottom):
+1. **Qualifier badge** (top center) — a short phrase that filters the audience. Examples: "WARNING: Not For Roofers Under $2M/year", "For Roofers Above $2M/year.", "CASE STUDY". This creates exclusivity and pattern-interrupts the scroll
+2. **Headline** (center, massive) — the main statement. SHORT. Mixed case (not all-caps). Bold. 3-8 words max. This takes up 50-60% of the image. Numbers are huge. End with a period for authority
+3. **Subhead** (below headline) — the payoff or supporting punch. Can be in yellow (#FACC15) when it's the payoff number. Example: "They Did $1.1M/mo." in yellow. Or italic gray for supporting context like "One roofing company. One marketing system."
+4. **Context line** (bottom, small, italic) — soft CTA or explanatory line. Examples: "Here's every step of the system.", "Different marketing system.", "Same roofing company. Same market."
+
+### Typography:
+- Headlines: Inter Black (weight 900), mixed case, massive size. NOT uppercase. NOT condensed
+- Subhead: Inter Bold (weight 700), mixed case. Yellow for payoff numbers, italic gray for context
+- Context line: Inter Regular, italic, gray (#94A3B8), centered
+- Key numbers ($1.1M, $47K, 92) in orange (#FF6B00) within headlines
+
+### Background:
+- Dark (#0F0F0F or #111111) with warm golden/amber spotlight gradient from the top
+- The warm light creates depth and drama — like a cinematic spotlight hitting the text
+- background_type should be "warm_spotlight" for most ads
+- NO flat solid colors unless it's a very minimal concept
+
+### Qualifier badge style:
+- Red background (#DC2626) for warning/exclusion qualifiers ("WARNING: Not For Roofers Under $2M/year")
+- Dark translucent with border for neutral qualifiers ("CASE STUDY", "For Roofers Above $2M/year.")
+
+### What NOT to do:
+- NO all-uppercase headlines (mixed case only)
+- NO orange CTA pill buttons (use a text context line instead)
+- NO flat solid backgrounds (use warm spotlight)
+- NO condensed fonts (use bold/black weight of a clean sans-serif)
+- NO more than 8 words in the headline (short and punchy wins)
+
+---
+
 ## OUTPUT FORMAT — CRITICAL
 
 You MUST return a valid JSON array of ad concept objects. No markdown, no explanation, no wrapping — ONLY the JSON array.
@@ -165,79 +200,60 @@ Each object must have this exact structure:
   "angle": "One of the 10 angles above",
   "awareness_level": "Unaware | Problem Aware | Solution Aware | Most Aware",
   "text_overlay": {
-    "headline": "The main statement — this IS the ad",
-    "subhead": "1-2 line follow-up punch or supporting context",
-    "cta_badge": "3-5 word CTA — e.g. See the System",
-    "proof_element": "e.g. QuoteSpark — Built for 7-figure roofers"
+    "qualifier": "WARNING: Not For Roofers Under $2M/year",
+    "headline": "$1.1M Per Month.",
+    "subhead": "One roofing company. One marketing system. No brand deals. No luck.",
+    "context_line": "Here's every step of the system."
   },
   "style": {
-    "headline_accent_words": ["$1.1M", "92"],
-    "background_type": "solid | gradient | texture",
-    "background_primary": "#1A1A2E",
-    "background_secondary": "#0F1B2D"
+    "headline_accent_words": ["$1.1M"],
+    "subhead_color": "gray | yellow | white",
+    "background_type": "warm_spotlight | gradient | solid",
+    "background_primary": "#0F0F0F",
+    "background_secondary": "#1A1A2E",
+    "qualifier_bg": "red | dark"
   },
   "gemini_json": {
-    "prompt": "Create a 1080x1080 square static advertisement image...",
+    "prompt": "Create a 1080x1080 square static advertisement image. Dark background with warm golden spotlight gradient from top. [Full description of the ad — layout, text placement, mood. NO PEOPLE.]",
     "dimensions": { "width": 1080, "height": 1080, "aspect_ratio": "1:1" },
     "text_elements": [
       {
-        "type": "headline",
-        "text": "EXACT headline text",
-        "style": {
-          "color": "#FFFFFF",
-          "accent_color": "#FF6B00",
-          "accent_words": ["$1.1M"],
-          "weight": "bold",
-          "size": "large",
-          "font_feel": "condensed sans-serif, uppercase"
-        },
-        "position": "upper_center"
+        "type": "qualifier",
+        "text": "EXACT qualifier text",
+        "style": { "background": "#DC2626 or rgba(255,255,255,0.1)", "color": "#FFFFFF", "weight": "bold", "size": "small" },
+        "position": "top_center"
       },
       {
-        "type": "subheadline",
+        "type": "headline",
+        "text": "EXACT headline text",
+        "style": { "color": "#FFFFFF", "accent_color": "#FF6B00", "accent_words": ["$1.1M"], "weight": "black", "size": "massive", "font_feel": "bold sans-serif, mixed case" },
+        "position": "center"
+      },
+      {
+        "type": "subhead",
         "text": "EXACT subhead text",
-        "style": {
-          "color": "#94A3B8",
-          "weight": "medium",
-          "size": "medium",
-          "font_feel": "clean sans-serif, sentence case"
-        },
+        "style": { "color": "#FACC15 or #94A3B8", "weight": "bold", "size": "large" },
         "position": "below_headline"
       },
       {
-        "type": "cta_badge",
-        "text": "EXACT CTA text",
-        "style": {
-          "background": "#FF6B00",
-          "color": "#FFFFFF",
-          "weight": "bold",
-          "shape": "rounded_pill"
-        },
-        "position": "lower_left"
-      },
-      {
-        "type": "proof_element",
-        "text": "EXACT proof text",
-        "style": {
-          "color": "#94A3B8",
-          "weight": "regular",
-          "size": "small"
-        },
-        "position": "lower_right"
+        "type": "context_line",
+        "text": "EXACT context line text",
+        "style": { "color": "#94A3B8", "weight": "regular", "size": "small", "font_style": "italic" },
+        "position": "bottom_center"
       }
     ],
     "background": {
-      "type": "solid | gradient | texture",
-      "primary_color": "#1A1A2E",
-      "secondary_color": "#0F1B2D",
-      "description": "Background description — NO PEOPLE"
+      "type": "warm_spotlight | gradient | solid",
+      "primary_color": "#0F0F0F",
+      "secondary_color": "#1A1A2E",
+      "description": "Dark background with warm golden/amber spotlight gradient from top — NO PEOPLE"
     },
     "constraints": [
       "Render all text exactly as specified",
       "1080x1080 square format",
       "No people, faces, hands, or human figures",
       "Text must be legible and high-contrast",
-      "Professional and bold"
+      "Warm cinematic spotlight feel, not flat"
     ]
   }
 }
