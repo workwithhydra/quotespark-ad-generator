@@ -48,15 +48,15 @@ export default function AdRenderer916({
   id,
 }: AdRenderer916Props) {
   const headlineRef = useRef<HTMLDivElement>(null);
-  const [headlineFontSize, setHeadlineFontSize] = useState(132);
+  const [headlineFontSize, setHeadlineFontSize] = useState(180);
 
   useEffect(() => {
     if (!headlineRef.current) return;
     const el = headlineRef.current;
-    let size = 132;
+    let size = 180;
     el.style.fontSize = `${size}px`;
 
-    while (el.scrollHeight > el.clientHeight && size > 64) {
+    while (el.scrollHeight > el.clientHeight && size > 90) {
       size -= 4;
       el.style.fontSize = `${size}px`;
     }
@@ -154,7 +154,7 @@ export default function AdRenderer916({
               color: '#FFFFFF',
               letterSpacing: '-0.02em',
               textAlign: 'center',
-              maxHeight: 1000,
+              maxHeight: 1100,
               overflow: 'hidden',
             }}
           >

@@ -44,15 +44,15 @@ const SUBHEAD_COLORS = {
 
 export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) {
   const headlineRef = useRef<HTMLDivElement>(null);
-  const [headlineFontSize, setHeadlineFontSize] = useState(120);
+  const [headlineFontSize, setHeadlineFontSize] = useState(160);
 
   useEffect(() => {
     if (!headlineRef.current) return;
     const el = headlineRef.current;
-    let size = 120;
+    let size = 160;
     el.style.fontSize = `${size}px`;
 
-    while (el.scrollHeight > el.clientHeight && size > 56) {
+    while (el.scrollHeight > el.clientHeight && size > 80) {
       size -= 4;
       el.style.fontSize = `${size}px`;
     }
@@ -151,7 +151,7 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
               lineHeight: 1.05,
               color: '#FFFFFF',
               letterSpacing: '-0.02em',
-              maxHeight: 620,
+              maxHeight: 700,
               overflow: 'hidden',
             }}
           >

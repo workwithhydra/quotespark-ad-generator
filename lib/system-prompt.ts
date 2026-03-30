@@ -160,7 +160,7 @@ The best-performing QuoteSpark ads follow this specific visual pattern. Every ad
 
 ### Structure (4 elements, top to bottom):
 1. **Qualifier badge** (top center) — a short phrase that filters the audience. Examples: "WARNING: Not For Roofers Under $2M/year", "For Roofers Above $2M/year.", "CASE STUDY". This creates exclusivity and pattern-interrupts the scroll
-2. **Headline** (center, massive) — the main statement. SHORT. Mixed case (not all-caps). Bold. 3-8 words max. This takes up 50-60% of the image. Numbers are huge. End with a period for authority
+2. **Headline** (center, massive) — the main statement. EXTREMELY SHORT. Mixed case (not all-caps). Bold. 2-6 words MAXIMUM. This takes up 50-60% of the image. Numbers are huge. End with a period for authority. Examples of winning headlines: "$1.1M Per Month.", "92 Jobs. One System.", "$47K/mo in Ads.", "The $1.1M Math." — if your headline is longer than 6 words, it is TOO LONG. Rewrite it shorter
 3. **Subhead** (below headline) — the payoff or supporting punch. Can be in yellow (#FACC15) when it's the payoff number. Example: "They Did $1.1M/mo." in yellow. Or italic gray for supporting context like "One roofing company. One marketing system."
 4. **Context line** (bottom, small, italic) — soft CTA or explanatory line. Examples: "Here's every step of the system.", "Different marketing system.", "Same roofing company. Same market."
 
