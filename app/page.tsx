@@ -23,19 +23,11 @@ export default function Home() {
         body: JSON.stringify(request),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const text = await res.text();
-        let msg = 'Generation failed';
-        try { msg = JSON.parse(text).error || msg; } catch { msg = text || msg; }
-        throw new Error(msg);
+        throw new Error(data.error || 'Generation failed');
       }
-
-      const text = (await res.text()).trim();
-      const jsonStart = text.lastIndexOf('{');
-      if (jsonStart === -1) throw new Error('No response data received');
-
-      const data = JSON.parse(text.slice(jsonStart));
-      if (data.error) throw new Error(data.error);
 
       setConcepts(data.concepts);
     } catch (err) {

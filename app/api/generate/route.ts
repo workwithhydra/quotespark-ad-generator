@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { SYSTEM_PROMPT } from '@/lib/system-prompt';
-import { GenerateRequest } from '@/lib/types';
+import { AdConcept, GenerateRequest } from '@/lib/types';
 
 export const maxDuration = 60;
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
     userMessage += ` Return exactly ${conceptCount} concepts as a JSON array.`;
 
-    const stream = anthropic.messages.stream({
+    const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
       max_tokens: 8192,
       system: SYSTEM_PROMPT,
@@ -46,57 +46,24 @@ export async function POST(request: Request) {
       ],
     });
 
-    const encoder = new TextEncoder();
+    const textBlock = message.content.find((block) => block.type === 'text');
+    if (!textBlock || textBlock.type !== 'text') {
+      return Response.json(
+        { error: 'No text response from Claude' },
+        { status: 500 }
+      );
+    }
 
-    const readable = new ReadableStream({
-      async start(controller) {
-        try {
-          let fullText = '';
+    let jsonText = textBlock.text.trim();
 
-          stream.on('text', (text) => {
-            fullText += text;
-            // Send a heartbeat to keep the connection alive
-            controller.enqueue(encoder.encode(' '));
-          });
+    // Strip markdown code fences if present
+    if (jsonText.startsWith('```')) {
+      jsonText = jsonText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+    }
 
-          const finalMessage = await stream.finalMessage();
+    const concepts: AdConcept[] = JSON.parse(jsonText);
 
-          const textBlock = finalMessage.content.find((block) => block.type === 'text');
-          if (!textBlock || textBlock.type !== 'text') {
-            controller.enqueue(
-              encoder.encode(JSON.stringify({ error: 'No text response from Claude' }))
-            );
-            controller.close();
-            return;
-          }
-
-          let jsonText = textBlock.text.trim();
-          if (jsonText.startsWith('```')) {
-            jsonText = jsonText.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
-          }
-
-          const concepts = JSON.parse(jsonText);
-          // Clear the heartbeat spaces and send real data
-          controller.enqueue(
-            encoder.encode('\n' + JSON.stringify({ concepts }))
-          );
-          controller.close();
-        } catch (err) {
-          const message = err instanceof Error ? err.message : 'Unknown error';
-          controller.enqueue(
-            encoder.encode('\n' + JSON.stringify({ error: message }))
-          );
-          controller.close();
-        }
-      },
-    });
-
-    return new Response(readable, {
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Transfer-Encoding': 'chunked',
-      },
-    });
+    return Response.json({ concepts });
   } catch (error) {
     console.error('Generate error:', error);
     const message =
