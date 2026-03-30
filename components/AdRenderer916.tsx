@@ -42,16 +42,16 @@ export default function AdRenderer916({
   id,
 }: AdRenderer916Props) {
   const headlineRef = useRef<HTMLDivElement>(null);
-  const [headlineFontSize, setHeadlineFontSize] = useState(68);
+  const [headlineFontSize, setHeadlineFontSize] = useState(108);
 
   useEffect(() => {
     if (!headlineRef.current) return;
     const el = headlineRef.current;
-    let size = 72;
+    let size = 108;
     el.style.fontSize = `${size}px`;
 
-    while (el.scrollHeight > el.clientHeight && size > 42) {
-      size -= 2;
+    while (el.scrollHeight > el.clientHeight && size > 60) {
+      size -= 3;
       el.style.fontSize = `${size}px`;
     }
     setHeadlineFontSize(size);
@@ -82,15 +82,15 @@ export default function AdRenderer916({
       <div
         style={{
           position: 'absolute',
-          top: 160,
-          left: 100,
-          right: 100,
-          bottom: 160,
+          top: 140,
+          left: 80,
+          right: 80,
+          bottom: 140,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: 60,
+          gap: 56,
         }}
       >
         {/* Headline */}
@@ -100,12 +100,12 @@ export default function AdRenderer916({
             fontFamily: "'Oswald', sans-serif",
             fontWeight: 700,
             fontSize: headlineFontSize,
-            lineHeight: 1.15,
+            lineHeight: 1.1,
             color: '#FFFFFF',
             textTransform: 'uppercase',
-            letterSpacing: '0.02em',
+            letterSpacing: '0.01em',
             textAlign: 'center',
-            maxHeight: 800,
+            maxHeight: 950,
             overflow: 'hidden',
             width: '100%',
           }}
@@ -121,25 +121,25 @@ export default function AdRenderer916({
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 500,
-            fontSize: 30,
-            lineHeight: 1.5,
+            fontSize: 36,
+            lineHeight: 1.45,
             color: '#94A3B8',
             textAlign: 'center',
-            maxWidth: 760,
+            maxWidth: 800,
           }}
         >
           {concept.text_overlay.subhead}
         </div>
 
-        {/* CTA badge — centered */}
+        {/* CTA badge */}
         <div
           style={{
             backgroundColor: '#FF6B00',
             color: '#FFFFFF',
             fontFamily: "'Inter', sans-serif",
             fontWeight: 700,
-            fontSize: 22,
-            padding: '18px 48px',
+            fontSize: 26,
+            padding: '20px 56px',
             borderRadius: 100,
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
@@ -153,7 +153,7 @@ export default function AdRenderer916({
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 400,
-            fontSize: 18,
+            fontSize: 22,
             color: '#94A3B8',
             textAlign: 'center',
           }}

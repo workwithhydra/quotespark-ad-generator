@@ -15,7 +15,6 @@ function highlightAccentWords(
 ): React.ReactNode[] {
   if (!accentWords.length) return [text];
 
-  // Escape special regex characters in accent words
   const escaped = accentWords.map((w) =>
     w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   );
@@ -39,16 +38,17 @@ function highlightAccentWords(
 
 export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) {
   const headlineRef = useRef<HTMLDivElement>(null);
-  const [headlineFontSize, setHeadlineFontSize] = useState(56);
+  const [headlineFontSize, setHeadlineFontSize] = useState(96);
 
   useEffect(() => {
     if (!headlineRef.current) return;
     const el = headlineRef.current;
-    let size = 56;
+    let size = 96;
     el.style.fontSize = `${size}px`;
 
-    while (el.scrollHeight > el.clientHeight && size > 36) {
-      size -= 2;
+    // Step down until headline fits in the upper ~60% (650px)
+    while (el.scrollHeight > el.clientHeight && size > 54) {
+      size -= 3;
       el.style.fontSize = `${size}px`;
     }
     setHeadlineFontSize(size);
@@ -75,20 +75,20 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
         transformOrigin: 'top left',
       }}
     >
-      {/* Content container with padding */}
+      {/* Content container */}
       <div
         style={{
           position: 'absolute',
-          top: 80,
-          left: 80,
-          right: 80,
-          bottom: 80,
+          top: 72,
+          left: 72,
+          right: 72,
+          bottom: 72,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
         }}
       >
-        {/* Top section: headline + subhead */}
+        {/* Top section: headline + subhead — should own upper 60%+ */}
         <div>
           <div
             ref={headlineRef}
@@ -96,11 +96,11 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
               fontFamily: "'Oswald', sans-serif",
               fontWeight: 700,
               fontSize: headlineFontSize,
-              lineHeight: 1.15,
+              lineHeight: 1.1,
               color: '#FFFFFF',
               textTransform: 'uppercase',
-              letterSpacing: '0.02em',
-              maxHeight: 520,
+              letterSpacing: '0.01em',
+              maxHeight: 650,
               overflow: 'hidden',
             }}
           >
@@ -114,11 +114,11 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 500,
-              fontSize: 26,
-              lineHeight: 1.5,
+              fontSize: 32,
+              lineHeight: 1.45,
               color: '#94A3B8',
-              marginTop: 32,
-              maxWidth: 800,
+              marginTop: 36,
+              maxWidth: 860,
             }}
           >
             {concept.text_overlay.subhead}
@@ -139,8 +139,8 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
               color: '#FFFFFF',
               fontFamily: "'Inter', sans-serif",
               fontWeight: 700,
-              fontSize: 18,
-              padding: '14px 32px',
+              fontSize: 22,
+              padding: '16px 40px',
               borderRadius: 100,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
@@ -153,10 +153,10 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 400,
-              fontSize: 16,
+              fontSize: 20,
               color: '#94A3B8',
               textAlign: 'right',
-              maxWidth: 300,
+              maxWidth: 400,
             }}
           >
             {concept.text_overlay.proof_element}
