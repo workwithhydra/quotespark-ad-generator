@@ -9,8 +9,7 @@ import AdGrid from '@/components/AdGrid';
 import LoadingState from '@/components/LoadingState';
 import ClientTabs from '@/components/ClientTabs';
 import AddClientModal from '@/components/AddClientModal';
-import CartBar from '@/components/CartBar';
-import ShipModal from '@/components/ShipModal';
+import ShipView from '@/components/ShipView';
 
 export default function Home() {
   const [roofingClients, setRoofingClients] = useState<RoofingClient[]>([]);
@@ -21,9 +20,8 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [editingClient, setEditingClient] = useState<RoofingClient | undefined>(undefined);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
-  const [showShipModal, setShowShipModal] = useState(false);
+  const [showShipView, setShowShipView] = useState(false);
 
-  // Load persisted roofing clients on mount
   useEffect(() => {
     setRoofingClients(getStoredClients());
   }, []);
@@ -35,16 +33,16 @@ export default function Home() {
     setActiveClientId(clientId);
     setConcepts([]);
     setError(null);
+    setSelectedIndices(new Set());
   }
 
-  function handleOpenAdd() {
-    setEditingClient(undefined);
-    setShowModal(true);
-  }
-
-  function handleOpenEdit(client: RoofingClient) {
-    setEditingClient(client);
-    setShowModal(true);
+  function handleToggleSelect(index: number) {
+    setSelectedIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
   }
 
   function handleSaveClient(client: RoofingClient) {
@@ -58,22 +56,12 @@ export default function Home() {
 
   function handleDeleteClient(clientId: string) {
     deleteStoredClient(clientId);
-    const remaining = getStoredClients();
-    setRoofingClients(remaining);
-    // Fall back to QuoteSpark if the active client was deleted
+    setRoofingClients(getStoredClients());
     if (activeClientId === clientId) {
       setActiveClientId(CLIENTS[0].id);
       setConcepts([]);
+      setSelectedIndices(new Set());
     }
-  }
-
-  function handleToggleSelect(index: number) {
-    setSelectedIndices((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) next.delete(index);
-      else next.add(index);
-      return next;
-    });
   }
 
   async function handleGenerate(request: GenerateRequest) {
@@ -88,13 +76,8 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(request),
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Generation failed');
-      }
-
+      if (!res.ok) throw new Error(data.error || 'Generation failed');
       setConcepts(data.concepts);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -103,37 +86,64 @@ export default function Home() {
     }
   }
 
+  // Ship view is a full-screen overlay
+  if (showShipView) {
+    return (
+      <ShipView
+        concepts={concepts}
+        selectedIndices={selectedIndices}
+        client={activeClient}
+        onClose={() => setShowShipView(false)}
+        onToggleSelect={handleToggleSelect}
+        onEditClient={(client) => {
+          setShowShipView(false);
+          setEditingClient(client);
+          setShowModal(true);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-zinc-900">
       {/* Header */}
       <header className="border-b border-zinc-800 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-white">
-              QuoteSpark Ad Generator
-            </h1>
+            <h1 className="text-xl font-bold text-white">QuoteSpark Ad Generator</h1>
             <p className="text-sm text-zinc-400">Static ad concepts for Meta</p>
           </div>
-          {concepts.length > 0 && (
-            <span className="text-sm text-zinc-400">
-              {concepts.length} concept{concepts.length !== 1 ? 's' : ''} generated
-            </span>
-          )}
+          <div className="flex items-center gap-3">
+            {selectedIndices.size > 0 && (
+              <span className="text-sm text-zinc-400">
+                {selectedIndices.size} selected
+              </span>
+            )}
+            <button
+              onClick={() => setShowShipView(true)}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-5 rounded-lg transition-colors text-sm flex items-center gap-2"
+            >
+              Ship to Meta
+              {selectedIndices.size > 0 && (
+                <span className="bg-white/20 text-white text-xs px-1.5 py-0.5 rounded-full">
+                  {selectedIndices.size}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Client tabs */}
         <ClientTabs
           clients={allClients}
           activeClientId={activeClientId}
           onSelect={handleClientSelect}
-          onAddClient={handleOpenAdd}
-          onEditClient={handleOpenEdit}
+          onAddClient={() => { setEditingClient(undefined); setShowModal(true); }}
+          onEditClient={(client) => { setEditingClient(client); setShowModal(true); }}
           onDeleteClient={handleDeleteClient}
         />
 
-        {/* Form — always visible at top */}
         <div className="max-w-lg mb-12">
           <GenerateForm
             clientId={activeClient.id}
@@ -143,17 +153,14 @@ export default function Home() {
           />
         </div>
 
-        {/* Error */}
         {error && (
           <div className="mb-8 bg-red-900/30 border border-red-800 text-red-300 px-6 py-4 rounded-lg">
             {error}
           </div>
         )}
 
-        {/* Loading */}
         {isLoading && <LoadingState />}
 
-        {/* Results */}
         {!isLoading && concepts.length > 0 && (
           <AdGrid
             concepts={concepts}
@@ -163,32 +170,6 @@ export default function Home() {
         )}
       </main>
 
-      {/* Cart bar */}
-      {selectedIndices.size > 0 && (
-        <CartBar
-          count={selectedIndices.size}
-          clientName={activeClient.name}
-          onClear={() => setSelectedIndices(new Set())}
-          onShip={() => setShowShipModal(true)}
-        />
-      )}
-
-      {/* Ship modal */}
-      {showShipModal && (
-        <ShipModal
-          concepts={concepts}
-          selectedIndices={selectedIndices}
-          client={activeClient}
-          onClose={() => setShowShipModal(false)}
-          onEditClient={(client) => {
-            setShowShipModal(false);
-            setEditingClient(client);
-            setShowModal(true);
-          }}
-        />
-      )}
-
-      {/* Add / Edit client modal */}
       {showModal && (
         <AddClientModal
           existingClient={editingClient}

@@ -8,8 +8,10 @@ export interface RoofingClient {
   proofPoints: string[];
   type: 'quotespark' | 'roofing';
   // Meta integration
-  ad_account_id?: string;   // format: act_XXXXXXXXXX or just the number
+  ad_account_id?: string;        // format: act_XXXXXXXXXX or just the number
   meta_access_token?: string;
+  facebook_page_id?: string;     // FB page connected to this ad account
+  landing_page_url?: string;     // click-through URL for ads
 }
 
 export const CLIENTS: RoofingClient[] = [
