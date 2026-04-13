@@ -2,18 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import { AdConcept, GenerateRequest } from '@/lib/types';
-import { CLIENTS, RoofingClient } from '@/lib/clients';
-import { getStoredClients, saveStoredClient, deleteStoredClient } from '@/lib/client-store';
+import { RoofingClient } from '@/lib/clients';
+import {
+  getStoredClients,
+  saveStoredClient,
+  deleteStoredClient,
+  getQuoteSpark,
+  saveClientOverride,
+} from '@/lib/client-store';
 import GenerateForm from '@/components/GenerateForm';
 import AdGrid from '@/components/AdGrid';
 import LoadingState from '@/components/LoadingState';
-import ClientTabs from '@/components/ClientTabs';
+import Sidebar from '@/components/Sidebar';
 import AddClientModal from '@/components/AddClientModal';
 import ShipView from '@/components/ShipView';
 
 export default function Home() {
+  const [quoteSpark, setQuoteSpark] = useState<RoofingClient | null>(null);
   const [roofingClients, setRoofingClients] = useState<RoofingClient[]>([]);
-  const [activeClientId, setActiveClientId] = useState(CLIENTS[0].id);
+  const [activeClientId, setActiveClientId] = useState('quotespark');
   const [concepts, setConcepts] = useState<AdConcept[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,11 +30,20 @@ export default function Home() {
   const [showShipView, setShowShipView] = useState(false);
 
   useEffect(() => {
+    setQuoteSpark(getQuoteSpark());
     setRoofingClients(getStoredClients());
   }, []);
 
-  const allClients = [...CLIENTS, ...roofingClients];
-  const activeClient = allClients.find((c) => c.id === activeClientId) ?? CLIENTS[0];
+  const allClients: RoofingClient[] = quoteSpark
+    ? [quoteSpark, ...roofingClients]
+    : roofingClients;
+
+  const activeClient = allClients.find((c) => c.id === activeClientId) ?? allClients[0];
+
+  function refreshClients() {
+    setQuoteSpark(getQuoteSpark());
+    setRoofingClients(getStoredClients());
+  }
 
   function handleClientSelect(clientId: string) {
     setActiveClientId(clientId);
@@ -46,8 +62,19 @@ export default function Home() {
   }
 
   function handleSaveClient(client: RoofingClient) {
-    saveStoredClient(client);
-    setRoofingClients(getStoredClients());
+    if (client.protected || client.type === 'quotespark') {
+      // Save only as overrides — don't touch the roofing clients list
+      saveClientOverride(client.id, {
+        name: client.name,
+        ad_account_id: client.ad_account_id,
+        meta_access_token: client.meta_access_token,
+        facebook_page_id: client.facebook_page_id,
+        landing_page_url: client.landing_page_url,
+      });
+    } else {
+      saveStoredClient(client);
+    }
+    refreshClients();
     setActiveClientId(client.id);
     setConcepts([]);
     setError(null);
@@ -56,9 +83,9 @@ export default function Home() {
 
   function handleDeleteClient(clientId: string) {
     deleteStoredClient(clientId);
-    setRoofingClients(getStoredClients());
+    refreshClients();
     if (activeClientId === clientId) {
-      setActiveClientId(CLIENTS[0].id);
+      setActiveClientId('quotespark');
       setConcepts([]);
       setSelectedIndices(new Set());
     }
@@ -86,8 +113,8 @@ export default function Home() {
     }
   }
 
-  // Ship view is a full-screen overlay
-  if (showShipView) {
+  // Ship view is full-screen
+  if (showShipView && activeClient) {
     return (
       <ShipView
         concepts={concepts}
@@ -105,19 +132,17 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900">
+    <div className="min-h-screen bg-zinc-900 flex flex-col">
       {/* Header */}
-      <header className="border-b border-zinc-800 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <header className="flex-shrink-0 border-b border-zinc-800 px-6 py-4">
+        <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-white">QuoteSpark Ad Generator</h1>
-            <p className="text-sm text-zinc-400">Static ad concepts for Meta</p>
+            <p className="text-sm text-zinc-500">Static ad concepts for Meta</p>
           </div>
           <div className="flex items-center gap-3">
             {selectedIndices.size > 0 && (
-              <span className="text-sm text-zinc-400">
-                {selectedIndices.size} selected
-              </span>
+              <span className="text-sm text-zinc-400">{selectedIndices.size} selected</span>
             )}
             <button
               onClick={() => setShowShipView(true)}
@@ -125,7 +150,7 @@ export default function Home() {
             >
               Ship to Meta
               {selectedIndices.size > 0 && (
-                <span className="bg-white/20 text-white text-xs px-1.5 py-0.5 rounded-full">
+                <span className="bg-white/20 text-xs px-1.5 py-0.5 rounded-full">
                   {selectedIndices.size}
                 </span>
               )}
@@ -134,8 +159,9 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <ClientTabs
+      {/* Body: sidebar + main */}
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar
           clients={allClients}
           activeClientId={activeClientId}
           onSelect={handleClientSelect}
@@ -144,31 +170,35 @@ export default function Home() {
           onDeleteClient={handleDeleteClient}
         />
 
-        <div className="max-w-lg mb-12">
-          <GenerateForm
-            clientId={activeClient.id}
-            clientType={activeClient.type}
-            onGenerate={handleGenerate}
-            isLoading={isLoading}
-          />
-        </div>
-
-        {error && (
-          <div className="mb-8 bg-red-900/30 border border-red-800 text-red-300 px-6 py-4 rounded-lg">
-            {error}
+        <main className="flex-1 overflow-y-auto px-8 py-8">
+          <div className="max-w-lg mb-10">
+            {activeClient && (
+              <GenerateForm
+                clientId={activeClient.id}
+                clientType={activeClient.type}
+                onGenerate={handleGenerate}
+                isLoading={isLoading}
+              />
+            )}
           </div>
-        )}
 
-        {isLoading && <LoadingState />}
+          {error && (
+            <div className="mb-8 bg-red-900/30 border border-red-800 text-red-300 px-6 py-4 rounded-lg">
+              {error}
+            </div>
+          )}
 
-        {!isLoading && concepts.length > 0 && (
-          <AdGrid
-            concepts={concepts}
-            selectedIndices={selectedIndices}
-            onToggleSelect={handleToggleSelect}
-          />
-        )}
-      </main>
+          {isLoading && <LoadingState />}
+
+          {!isLoading && concepts.length > 0 && (
+            <AdGrid
+              concepts={concepts}
+              selectedIndices={selectedIndices}
+              onToggleSelect={handleToggleSelect}
+            />
+          )}
+        </main>
+      </div>
 
       {showModal && (
         <AddClientModal
