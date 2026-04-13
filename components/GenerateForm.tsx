@@ -31,6 +31,15 @@ const ROOFING_CLIENT_ANGLES = [
   { value: 'Local / Family-Owned — We\'re your neighbors. Not a national chain. We stand behind our work. Trust signal vs. faceless competitors.', label: 'Local / Family-Owned' },
 ];
 
+const DESIGN_STYLES = [
+  { value: '', label: 'Mix styles (recommended)' },
+  { value: 'Dark Cinematic — dark #0F0F0F background with warm golden spotlight gradient. Orange accent numbers. Yellow or gray subhead.', label: 'Dark Cinematic' },
+  { value: 'Deep Navy — dark navy #0A1628 to #1E3A5F gradient background. White or yellow subhead. Serious and credible.', label: 'Deep Navy' },
+  { value: 'Charcoal Minimal — solid charcoal #1A1A1A background, no gradient. White subhead. Clean and uncluttered.', label: 'Charcoal Minimal' },
+  { value: 'Warm Rust — deep rust #1C0A00 to #2D1500 gradient. Yellow or white subhead. Urgency and warmth.', label: 'Warm Rust' },
+  { value: 'Light Clean — off-white #F5F5F0 solid background. theme: "light". Dark #111111 headline text. Dark gray or orange subhead. Professional and trustworthy.', label: 'Light Clean' },
+];
+
 interface GenerateFormProps {
   clientId: string;
   clientType: 'quotespark' | 'roofing';
@@ -47,6 +56,7 @@ export default function GenerateForm({
   const [angleFocus, setAngleFocus] = useState('');
   const [proofPoints, setProofPoints] = useState('');
   const [conceptCount, setConceptCount] = useState(5);
+  const [designStyle, setDesignStyle] = useState('');
 
   const angles = clientType === 'quotespark' ? QUOTESPARK_ANGLES : ROOFING_CLIENT_ANGLES;
 
@@ -57,6 +67,7 @@ export default function GenerateForm({
       angleFocus: angleFocus || undefined,
       proofPoints: proofPoints || undefined,
       conceptCount,
+      designStyle: designStyle || undefined,
     });
   }
 
@@ -78,6 +89,27 @@ export default function GenerateForm({
           {angles.map((angle) => (
             <option key={angle.label} value={angle.value}>
               {angle.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label
+          htmlFor="style"
+          className="block text-sm font-medium text-zinc-300 mb-2"
+        >
+          Design Style
+        </label>
+        <select
+          id="style"
+          value={designStyle}
+          onChange={(e) => setDesignStyle(e.target.value)}
+          className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+        >
+          {DESIGN_STYLES.map((s) => (
+            <option key={s.label} value={s.value}>
+              {s.label}
             </option>
           ))}
         </select>

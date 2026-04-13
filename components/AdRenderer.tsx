@@ -36,10 +36,12 @@ function highlightAccentWords(
   });
 }
 
-const SUBHEAD_COLORS = {
+const SUBHEAD_COLORS: Record<string, string> = {
   gray: '#94A3B8',
   yellow: '#FACC15',
   white: '#FFFFFF',
+  orange: '#FF6B00',
+  dark_gray: '#374151',
 };
 
 export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) {
@@ -59,10 +61,26 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
     setHeadlineFontSize(size);
   }, [concept.text_overlay.headline]);
 
+  const isLight = concept.style.theme === 'light';
   const isWarmSpotlight = concept.style.background_type === 'warm_spotlight';
-  const qualifierBg = concept.style.qualifier_bg === 'red' ? '#DC2626' : 'rgba(255,255,255,0.1)';
-  const qualifierBorder = concept.style.qualifier_bg === 'red' ? 'none' : '1px solid rgba(255,255,255,0.3)';
-  const subheadColor = SUBHEAD_COLORS[concept.style.subhead_color] || '#94A3B8';
+
+  const qualifierBgMap: Record<string, string> = {
+    red: '#DC2626',
+    orange: '#FF6B00',
+    dark: isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.1)',
+  };
+  const qualifierBorderMap: Record<string, string> = {
+    red: 'none',
+    orange: 'none',
+    dark: isLight ? '1px solid rgba(0,0,0,0.2)' : '1px solid rgba(255,255,255,0.3)',
+  };
+  const qualifierTextColor = (concept.style.qualifier_bg === 'dark' && isLight) ? '#111111' : '#FFFFFF';
+
+  const qualifierBg = qualifierBgMap[concept.style.qualifier_bg] ?? qualifierBgMap.dark;
+  const qualifierBorder = qualifierBorderMap[concept.style.qualifier_bg] ?? qualifierBorderMap.dark;
+  const subheadColor = SUBHEAD_COLORS[concept.style.subhead_color] || (isLight ? '#374151' : '#94A3B8');
+  const headlineColor = isLight ? '#111111' : '#FFFFFF';
+  const contextLineColor = isLight ? '#6B7280' : '#94A3B8';
 
   return (
     <div
@@ -126,7 +144,7 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
             style={{
               backgroundColor: qualifierBg,
               border: qualifierBorder,
-              color: '#FFFFFF',
+              color: qualifierTextColor,
               fontFamily: "'Inter', sans-serif",
               fontWeight: 700,
               fontSize: 20,
@@ -149,7 +167,7 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
               fontWeight: 900,
               fontSize: headlineFontSize,
               lineHeight: 1.05,
-              color: '#FFFFFF',
+              color: headlineColor,
               letterSpacing: '-0.02em',
               maxHeight: 700,
               overflow: 'hidden',
@@ -169,7 +187,7 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
               lineHeight: 1.2,
               color: subheadColor,
               marginTop: 28,
-              fontStyle: concept.style.subhead_color === 'yellow' ? 'normal' : 'italic',
+              fontStyle: (concept.style.subhead_color === 'yellow' || concept.style.subhead_color === 'orange' || concept.style.subhead_color === 'dark_gray') ? 'normal' : 'italic',
             }}
           >
             {concept.text_overlay.subhead}
@@ -182,7 +200,7 @@ export default function AdRenderer({ concept, scale = 1, id }: AdRendererProps) 
             fontFamily: "'Inter', sans-serif",
             fontWeight: 400,
             fontSize: 24,
-            color: '#94A3B8',
+            color: contextLineColor,
             fontStyle: 'italic',
             textAlign: 'center',
           }}

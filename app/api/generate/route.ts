@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     });
 
     const body: GenerateRequest = await request.json();
-    const { clientId, angleFocus, proofPoints, conceptCount = 5 } = body;
+    const { clientId, angleFocus, proofPoints, conceptCount = 5, designStyle } = body;
 
     const client = CLIENTS.find((c) => c.id === clientId) ?? CLIENTS[0];
     const systemPrompt = getSystemPrompt(client);
@@ -30,6 +30,12 @@ export async function POST(request: Request) {
       userMessage += ` Focus on this angle: ${angleFocus}.`;
     } else {
       userMessage += ` Diversify across different angles.`;
+    }
+
+    if (designStyle) {
+      userMessage += ` Use this visual style for ALL concepts: ${designStyle}`;
+    } else {
+      userMessage += ` Rotate through different visual styles across concepts — no two concepts should use the same background type or color scheme.`;
     }
 
     if (proofPoints) {

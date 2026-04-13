@@ -36,10 +36,12 @@ function highlightAccentWords(
   });
 }
 
-const SUBHEAD_COLORS = {
+const SUBHEAD_COLORS: Record<string, string> = {
   gray: '#94A3B8',
   yellow: '#FACC15',
   white: '#FFFFFF',
+  orange: '#FF6B00',
+  dark_gray: '#374151',
 };
 
 export default function AdRenderer916({

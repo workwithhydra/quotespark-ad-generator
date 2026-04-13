@@ -111,29 +111,53 @@ ${proofPoints}
 
 ---
 
-## WINNING AD STYLE — FOLLOW THIS EXACTLY
+## AD STRUCTURE (every concept)
 
-### Structure (4 elements, top to bottom):
-1. **Qualifier badge** (top center) — filters the right homeowner and creates instant relevance. Red background for alert/warning qualifiers. Dark for neutral. Examples: "HOMEOWNER ALERT", "Is Your Roof 15+ Years Old?", "Did the Storm Hit ${client.market}?", "Selling Your Home Soon?"
-2. **Headline** (center, massive) — the hook. EXTREMELY SHORT. Mixed case (not all-caps). Bold. 2-6 words MAXIMUM. Numbers are orange and huge. End with a period. Examples: "$0 Out of Pocket.", "Free Inspection.", "Before Winter.", "Your Insurance Covers This." — if longer than 6 words, rewrite shorter
-3. **Subhead** (below headline) — the payoff or supporting punch. Yellow (#FACC15) when it's the proof number or key payoff ("4.9 Stars. 200+ Roofs. ${client.market}."). Italic gray for context ("We handle the insurance claim for you.")
-4. **Context line** (bottom, small, italic) — soft CTA or explanatory detail. "Schedule your free inspection below." or "No out-of-pocket cost for most storm damage claims."
+4 elements, top to bottom — this never changes:
+1. **Qualifier badge** (top center) — filters the right homeowner. "HOMEOWNER ALERT", "Is Your Roof 15+ Years Old?", "Did the Storm Hit ${client.market}?", "Selling Your Home Soon?"
+2. **Headline** (center, massive) — EXTREMELY SHORT. Mixed case (not all-caps). 2-6 words MAX. Numbers in orange. End with a period. "$0 Out of Pocket.", "Free Inspection.", "Before Winter."
+3. **Subhead** (below headline) — the payoff. Yellow for proof numbers, gray/italic for context, white for clean styles
+4. **Context line** (bottom, small, italic) — soft CTA. "Schedule your free inspection below."
 
-### Typography:
-- Headlines: Inter Black (weight 900), mixed case, massive. NOT uppercase. NOT condensed
-- Subhead: Inter Bold (weight 700). Yellow for payoff numbers, italic gray for context
-- Context line: Inter Regular, italic, gray (#94A3B8), centered
-- Key numbers/proof in orange (#FF6B00) within headlines
+Typography: Inter Black (900) for headlines, Inter Bold (700) for subhead, Inter Regular italic for context line. NO all-caps headlines. NO people in any image.
 
-### Background:
-- Dark (#0F0F0F or #111111) with warm golden/amber spotlight gradient from top
-- background_type: "warm_spotlight" for almost all ads
-- NO flat solid colors unless truly minimal concept
-- NO PEOPLE anywhere — no homeowners, roofers, or figures of any kind
+---
 
-### Qualifier badge style:
-- Red background (#DC2626) for alert/warning qualifiers ("HOMEOWNER ALERT", "WARNING:")
-- Dark translucent with border for neutral qualifiers ("FREE INSPECTION", "Selling Soon?")
+## VISUAL STYLES — ROTATE ACROSS ALL 5 IN EVERY BATCH
+
+Each concept must use a different visual style. Never repeat the same background in one batch. Rotate through all five:
+
+### Style 1: Dark Cinematic
+- 'background_primary': "#0F0F0F", 'background_type': "warm_spotlight", 'theme': "dark"
+- Headline accent words in orange (#FF6B00)
+- 'subhead_color': "yellow" for proof numbers, "gray" for context
+- 'qualifier_bg': "red" for alert/warning, "dark" for neutral
+- Mood: dramatic, high-stakes, cinema
+
+### Style 2: Deep Navy
+- 'background_primary': "#0A1628", 'background_secondary': "#1E3A5F", 'background_type': "gradient", 'theme': "dark"
+- 'subhead_color': "white" or "yellow"
+- 'qualifier_bg': "red" for storm/urgency angles
+- Mood: serious, credible, storm/water damage energy
+
+### Style 3: Charcoal Minimal
+- 'background_primary': "#1A1A1A", 'background_type': "solid", 'theme': "dark"
+- 'subhead_color': "white"
+- 'qualifier_bg': "dark" (never red — this style is calm)
+- Mood: clean, premium, uncluttered authority
+
+### Style 4: Warm Rust
+- 'background_primary': "#1C0A00", 'background_secondary': "#2D1500", 'background_type': "gradient", 'theme': "dark"
+- 'subhead_color': "yellow" or "white"
+- 'qualifier_bg': "red" for urgency, "dark" for trust
+- Mood: urgency, warmth, "this is your home" — leaking, age, before winter
+
+### Style 5: Light Clean
+- 'background_primary': "#F5F5F0", 'background_type': "solid", 'theme': "light"
+- 'subhead_color': "dark_gray" for context, "orange" for proof numbers
+- 'qualifier_bg': "orange" (the orange pill label looks correct on light bg)
+- Headline text will render dark automatically — do NOT put accent words that clash
+- Mood: clean, trustworthy, professional — great for free inspection, social proof, local/family-owned
 
 ---
 
@@ -159,7 +183,8 @@ Each object must have this exact structure:
     "background_type": "warm_spotlight | gradient | solid",
     "background_primary": "#0F0F0F",
     "background_secondary": "#1A1A2E",
-    "qualifier_bg": "red | dark"
+    "qualifier_bg": "red | dark | orange",
+    "theme": "dark | light"
   },
   "gemini_json": {
     "prompt": "Create a 1080x1080 square static advertisement image. Dark background with warm golden spotlight gradient from top. [Full description — NO PEOPLE OR HUMAN FIGURES.]",
@@ -372,38 +397,53 @@ QuoteSpark is a roofing lead generation agency (Hydra Holdings portfolio company
 
 ---
 
-## WINNING AD STYLE — FOLLOW THIS EXACTLY
+## AD STRUCTURE (every concept)
 
-The best-performing QuoteSpark ads follow this specific visual pattern. Every ad you generate must match this style:
+4 elements, top to bottom — this never changes:
+1. **Qualifier badge** (top center) — filters the audience. "WARNING: Not For Roofers Under $2M/year", "For Roofers Above $2M/year.", "CASE STUDY"
+2. **Headline** (center, massive) — EXTREMELY SHORT. Mixed case (not all-caps). 2-6 words MAX. Numbers in orange. End with a period. "$1.1M Per Month.", "92 Jobs. One System.", "The $1.1M Math."
+3. **Subhead** (below headline) — the payoff. Yellow for proof numbers, gray/italic for context, white for clean styles
+4. **Context line** (bottom, small, italic) — soft CTA. "Here's every step of the system."
 
-### Structure (4 elements, top to bottom):
-1. **Qualifier badge** (top center) — a short phrase that filters the audience. Examples: "WARNING: Not For Roofers Under $2M/year", "For Roofers Above $2M/year.", "CASE STUDY". This creates exclusivity and pattern-interrupts the scroll
-2. **Headline** (center, massive) — the main statement. EXTREMELY SHORT. Mixed case (not all-caps). Bold. 2-6 words MAXIMUM. This takes up 50-60% of the image. Numbers are huge. End with a period for authority. Examples of winning headlines: "$1.1M Per Month.", "92 Jobs. One System.", "$47K/mo in Ads.", "The $1.1M Math." — if your headline is longer than 6 words, it is TOO LONG. Rewrite it shorter
-3. **Subhead** (below headline) — the payoff or supporting punch. Can be in yellow (#FACC15) when it's the payoff number. Example: "They Did $1.1M/mo." in yellow. Or italic gray for supporting context like "One roofing company. One marketing system."
-4. **Context line** (bottom, small, italic) — soft CTA or explanatory line. Examples: "Here's every step of the system.", "Different marketing system.", "Same roofing company. Same market."
+Typography: Inter Black (900) for headlines, Inter Bold (700) for subhead, Inter Regular italic for context line. NO all-caps headlines. NO people in any image.
 
-### Typography:
-- Headlines: Inter Black (weight 900), mixed case, massive size. NOT uppercase. NOT condensed
-- Subhead: Inter Bold (weight 700), mixed case. Yellow for payoff numbers, italic gray for context
-- Context line: Inter Regular, italic, gray (#94A3B8), centered
-- Key numbers ($1.1M, $47K, 92) in orange (#FF6B00) within headlines
+---
 
-### Background:
-- Dark (#0F0F0F or #111111) with warm golden/amber spotlight gradient from the top
-- The warm light creates depth and drama — like a cinematic spotlight hitting the text
-- background_type should be "warm_spotlight" for most ads
-- NO flat solid colors unless it's a very minimal concept
+## VISUAL STYLES — ROTATE ACROSS ALL 5 IN EVERY BATCH
 
-### Qualifier badge style:
-- Red background (#DC2626) for warning/exclusion qualifiers ("WARNING: Not For Roofers Under $2M/year")
-- Dark translucent with border for neutral qualifiers ("CASE STUDY", "For Roofers Above $2M/year.")
+Each concept must use a different visual style. Never repeat the same background in one batch. Rotate through all five:
 
-### What NOT to do:
-- NO all-uppercase headlines (mixed case only)
-- NO orange CTA pill buttons (use a text context line instead)
-- NO flat solid backgrounds (use warm spotlight)
-- NO condensed fonts (use bold/black weight of a clean sans-serif)
-- NO more than 8 words in the headline (short and punchy wins)
+### Style 1: Dark Cinematic
+- 'background_primary': "#0F0F0F", 'background_type': "warm_spotlight", 'theme': "dark"
+- Key numbers in orange (#FF6B00)
+- 'subhead_color': "yellow" for payoff numbers, "gray" for context
+- 'qualifier_bg': "red" for warning/exclusion, "dark" for neutral
+- Mood: dramatic, boardroom, high-stakes
+
+### Style 2: Deep Navy
+- 'background_primary': "#0A1628", 'background_secondary': "#1E3A5F", 'background_type': "gradient", 'theme': "dark"
+- 'subhead_color': "white" or "yellow"
+- 'qualifier_bg': "dark"
+- Mood: serious, executive, data-driven
+
+### Style 3: Charcoal Minimal
+- 'background_primary': "#1A1A1A", 'background_type': "solid", 'theme': "dark"
+- 'subhead_color': "white"
+- 'qualifier_bg': "dark"
+- Mood: premium, uncluttered, CEO-level authority
+
+### Style 4: Midnight Teal
+- 'background_primary': "#051A1A", 'background_secondary': "#0D2B2B", 'background_type': "gradient", 'theme': "dark"
+- 'subhead_color': "yellow" or "white"
+- 'qualifier_bg': "dark"
+- Mood: sophisticated, different from the usual dark ad — stands out in feed
+
+### Style 5: Light Clean
+- 'background_primary': "#F5F5F0", 'background_type': "solid", 'theme': "light"
+- 'subhead_color': "dark_gray" for context, "orange" for proof numbers
+- 'qualifier_bg': "orange"
+- Headline text will render dark automatically
+- Mood: clean, analytical, boardroom — contrasts sharply with typical dark ads in feed
 
 ---
 
@@ -429,7 +469,8 @@ Each object must have this exact structure:
     "background_type": "warm_spotlight | gradient | solid",
     "background_primary": "#0F0F0F",
     "background_secondary": "#1A1A2E",
-    "qualifier_bg": "red | dark"
+    "qualifier_bg": "red | dark | orange",
+    "theme": "dark | light"
   },
   "gemini_json": {
     "prompt": "Create a 1080x1080 square static advertisement image. Dark background with warm golden spotlight gradient from top. [Full description of the ad — layout, text placement, mood. NO PEOPLE.]",

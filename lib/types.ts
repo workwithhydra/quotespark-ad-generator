@@ -10,11 +10,12 @@ export interface AdConcept {
   };
   style: {
     headline_accent_words: string[];
-    subhead_color: 'gray' | 'yellow' | 'white';
+    subhead_color: 'gray' | 'yellow' | 'white' | 'orange' | 'dark_gray';
     background_type: 'warm_spotlight' | 'gradient' | 'solid';
     background_primary: string;
     background_secondary?: string;
-    qualifier_bg: 'red' | 'dark';
+    qualifier_bg: 'red' | 'dark' | 'orange';
+    theme: 'light' | 'dark';
   };
   gemini_json: GeminiPrompt;
 }
@@ -48,4 +49,5 @@ export interface GenerateRequest {
   angleFocus?: string;
   proofPoints?: string;
   conceptCount?: number;
+  designStyle?: string;
 }
