@@ -9,6 +9,8 @@ import AdGrid from '@/components/AdGrid';
 import LoadingState from '@/components/LoadingState';
 import ClientTabs from '@/components/ClientTabs';
 import AddClientModal from '@/components/AddClientModal';
+import CartBar from '@/components/CartBar';
+import ShipModal from '@/components/ShipModal';
 
 export default function Home() {
   const [roofingClients, setRoofingClients] = useState<RoofingClient[]>([]);
@@ -18,6 +20,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingClient, setEditingClient] = useState<RoofingClient | undefined>(undefined);
+  const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
+  const [showShipModal, setShowShipModal] = useState(false);
 
   // Load persisted roofing clients on mount
   useEffect(() => {
@@ -63,10 +67,20 @@ export default function Home() {
     }
   }
 
+  function handleToggleSelect(index: number) {
+    setSelectedIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }
+
   async function handleGenerate(request: GenerateRequest) {
     setIsLoading(true);
     setError(null);
     setConcepts([]);
+    setSelectedIndices(new Set());
 
     try {
       const res = await fetch('/api/generate', {
@@ -140,8 +154,39 @@ export default function Home() {
         {isLoading && <LoadingState />}
 
         {/* Results */}
-        {!isLoading && concepts.length > 0 && <AdGrid concepts={concepts} />}
+        {!isLoading && concepts.length > 0 && (
+          <AdGrid
+            concepts={concepts}
+            selectedIndices={selectedIndices}
+            onToggleSelect={handleToggleSelect}
+          />
+        )}
       </main>
+
+      {/* Cart bar */}
+      {selectedIndices.size > 0 && (
+        <CartBar
+          count={selectedIndices.size}
+          clientName={activeClient.name}
+          onClear={() => setSelectedIndices(new Set())}
+          onShip={() => setShowShipModal(true)}
+        />
+      )}
+
+      {/* Ship modal */}
+      {showShipModal && (
+        <ShipModal
+          concepts={concepts}
+          selectedIndices={selectedIndices}
+          client={activeClient}
+          onClose={() => setShowShipModal(false)}
+          onEditClient={(client) => {
+            setShowShipModal(false);
+            setEditingClient(client);
+            setShowModal(true);
+          }}
+        />
+      )}
 
       {/* Add / Edit client modal */}
       {showModal && (

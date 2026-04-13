@@ -7,6 +7,9 @@ export interface RoofingClient {
   differentiators: string[];
   proofPoints: string[];
   type: 'quotespark' | 'roofing';
+  // Meta integration
+  ad_account_id?: string;   // format: act_XXXXXXXXXX or just the number
+  meta_access_token?: string;
 }
 
 export const CLIENTS: RoofingClient[] = [

@@ -10,11 +10,13 @@ import { copyGeminiJson } from '@/lib/export-json';
 interface AdCardProps {
   concept: AdConcept;
   index: number;
+  selected?: boolean;
+  onToggleSelect?: () => void;
 }
 
 type Ratio = '1:1' | '9:16';
 
-export default function AdCard({ concept, index }: AdCardProps) {
+export default function AdCard({ concept, index, selected = false, onToggleSelect }: AdCardProps) {
   const [ratio, setRatio] = useState<Ratio>('1:1');
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -50,12 +52,29 @@ export default function AdCard({ concept, index }: AdCardProps) {
   }
 
   return (
-    <div className="bg-zinc-800 rounded-xl overflow-hidden border border-zinc-700">
+    <div
+      className={`bg-zinc-800 rounded-xl overflow-hidden border-2 transition-colors ${
+        selected ? 'border-orange-500' : 'border-zinc-700'
+      }`}
+    >
       {/* Preview */}
       <div
         className="relative bg-zinc-900 overflow-hidden mx-auto"
         style={{ width: previewWidth, height: previewHeight }}
       >
+        {/* Selection toggle overlay */}
+        {onToggleSelect && (
+          <button
+            onClick={onToggleSelect}
+            className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors shadow-lg ${
+              selected
+                ? 'bg-orange-500 text-white'
+                : 'bg-black/50 text-zinc-400 hover:bg-black/70 hover:text-white'
+            }`}
+          >
+            {selected ? '✓' : '+'}
+          </button>
+        )}
         {ratio === '1:1' ? (
           <AdRenderer concept={concept} scale={previewScale} />
         ) : (

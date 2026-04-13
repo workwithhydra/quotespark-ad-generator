@@ -17,6 +17,8 @@ const EMPTY_FORM = {
   avgTicket: '',
   differentiators: '',
   proofPoints: '',
+  ad_account_id: '',
+  meta_access_token: '',
 };
 
 export default function AddClientModal({ existingClient, onSave, onClose }: AddClientModalProps) {
@@ -31,6 +33,8 @@ export default function AddClientModal({ existingClient, onSave, onClose }: AddC
         avgTicket: existingClient.avgTicket ?? '',
         differentiators: existingClient.differentiators.join('\n'),
         proofPoints: existingClient.proofPoints.join('\n'),
+        ad_account_id: existingClient.ad_account_id ?? '',
+        meta_access_token: existingClient.meta_access_token ?? '',
       });
     }
   }, [existingClient]);
@@ -53,6 +57,8 @@ export default function AddClientModal({ existingClient, onSave, onClose }: AddC
         .map((l) => l.trim())
         .filter(Boolean),
       type: 'roofing',
+      ad_account_id: form.ad_account_id.trim() || undefined,
+      meta_access_token: form.meta_access_token.trim() || undefined,
     };
 
     onSave(client);
@@ -168,6 +174,39 @@ export default function AddClientModal({ existingClient, onSave, onClose }: AddC
               rows={4}
               className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
             />
+          </div>
+
+          {/* Meta Integration */}
+          <div className="border-t border-zinc-700 pt-5">
+            <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">
+              Meta Integration (optional)
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-1">
+                  Ad Account ID
+                </label>
+                <input
+                  type="text"
+                  value={form.ad_account_id}
+                  onChange={(e) => update('ad_account_id', e.target.value)}
+                  placeholder="act_XXXXXXXXXX"
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-1">
+                  Access Token
+                </label>
+                <textarea
+                  value={form.meta_access_token}
+                  onChange={(e) => update('meta_access_token', e.target.value)}
+                  placeholder="EAA..."
+                  rows={2}
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none font-mono text-xs"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="flex gap-3 pt-2">
