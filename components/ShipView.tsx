@@ -54,6 +54,9 @@ export default function ShipView({
   const [pushing, setPushing] = useState(false);
   const [results, setResults] = useState<PushResult[]>([]);
 
+  const THUMB_SCALE = 0.26;
+  const THUMB_SIZE = Math.round(1080 * THUMB_SCALE); // ~281px
+
   const hasCredentials = !!(client.ad_account_id && client.meta_access_token);
   const hasPageAndUrl = !!(client.facebook_page_id && client.landing_page_url);
   const selectedConcepts = Array.from(selectedIndices).map((i) => concepts[i]);
@@ -214,8 +217,8 @@ export default function ShipView({
                         isSelected ? 'border-orange-500' : 'border-zinc-700 hover:border-zinc-500'
                       }`}
                     >
-                      <div className="relative" style={{ aspectRatio: '1/1' }}>
-                        <div style={{ width: 1080, height: 1080, transform: 'scale(0.18)', transformOrigin: 'top left', pointerEvents: 'none' }}>
+                      <div style={{ width: THUMB_SIZE, height: THUMB_SIZE, overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
+                        <div style={{ width: 1080, height: 1080, transform: `scale(${THUMB_SCALE})`, transformOrigin: 'top left', pointerEvents: 'none' }}>
                           <AdRenderer concept={concept} />
                         </div>
                         {isSelected && (
