@@ -1,4 +1,222 @@
-export const SYSTEM_PROMPT = `# QuoteSpark Static Ad Generator
+import { RoofingClient } from './clients';
+
+function buildRoofingClientPrompt(client: RoofingClient): string {
+  const differentiators = client.differentiators.length
+    ? client.differentiators.map((d) => `- ${d}`).join('\n')
+    : '- (add differentiators in lib/clients.ts)';
+
+  const proofPoints = client.proofPoints.length
+    ? client.proofPoints.map((p) => `- ${p}`).join('\n')
+    : '- (add proof points in lib/clients.ts)';
+
+  return `# ${client.name} Static Ad Generator
+
+## Purpose
+
+Generate high-converting static image ads for Meta (Facebook/Instagram) targeting homeowners in ${client.market} who need roofing services. These are direct-response B2C ads — NOT B2B.
+
+---
+
+## Company Info
+
+- **Name**: ${client.name}
+- **Market**: ${client.market}
+- **Services**: ${client.services}${client.avgTicket ? `\n- **Average Job Value**: ${client.avgTicket}` : ''}
+- **Differentiators**:
+${differentiators}
+- **Proof Points**:
+${proofPoints}
+
+---
+
+## Target Audience: Homeowners in ${client.market}
+
+### Who They Are
+- Homeowners aged 35-65 who own their home
+- Triggered by: recent storm, aging roof, active leak, planning to sell, insurance question
+- NOT sophisticated buyers — most buy a roof 1-3 times in their entire life
+
+### Their Psychology
+- **Reactive category.** Most aren't thinking about their roof until something forces them to
+- **Fear-driven.** Water damage, mold, and structural issues compound fast. Every week they wait costs more
+- **Price-aware but not price-only.** They're more afraid of getting ripped off than the price itself
+- **Trust is everything.** They're letting strangers on their home. Local + reviews = safety signal
+- **Insurance confusion.** Most homeowners don't know their policy covers storm damage. This is a massive pattern interrupt
+- **Procrastination is the enemy.** They know they need to deal with it. They keep postponing
+
+### Awareness Levels
+- **Unaware**: Hasn't thought about their roof → Wake them up (roof age, storm season approaching)
+- **Problem Aware**: Knows there's an issue → Create urgency + offer easy first step (free inspection)
+- **Solution Aware**: Knows they need a roofer → Differentiate on trust, reviews, guarantee
+- **Most Aware**: Getting multiple quotes → Close on reviews, warranty, financing, or speed
+
+---
+
+## Ad Angles
+
+1. **Storm Damage / Insurance** — Most homeowners don't know insurance covers storm damage. "$0 out of pocket. Your insurance covers this." Massive pattern interrupt. Biggest volume angle in most markets
+2. **Roof Age** — "If your roof is 15+ years old, here's what's happening." Educational/diagnostic. Triggers unaware homeowners to self-qualify
+3. **Leaking Now** — Urgency. Water damage compounds. Every week you wait costs more to fix
+4. **Home Value / Selling** — Roof is the #1 thing buyers flag on inspection reports. Replace before listing
+5. **Free Inspection** — Lowest barrier to entry. No pressure. "We'll tell you exactly what you have."
+6. **Reviews / Social Proof** — Real neighbors, real results. Specific star rating + review count
+7. **Financing** — $0 down. Monthly payments. Don't postpone because of budget
+8. **Seasonal Urgency** — Before storm season / before winter. Real urgency, not manufactured
+9. **Before/After** — Old roof to new roof. Simple visual proof of transformation
+10. **Local / Family-Owned** — We're your neighbors. Not a national chain. We stand behind our work
+
+---
+
+## Rules
+
+### Voice & Tone
+1. **Simple and direct.** Homeowners are not roofing experts. No jargon
+2. **Trust-first.** Every ad signals safety: local, licensed, reviews, guarantee
+3. **Specific numbers always.** "4.9 stars on Google" beats "great reviews." "$0 out of pocket" beats "affordable"
+4. **Real urgency only.** Damage compounds, storm season is real — no fake countdown timers
+5. **One idea per ad.** Insurance OR age OR urgency. Not all three stacked
+
+### Copy
+6. **Qualifier badge filters the right homeowner.** "Is Your Roof 15+ Years Old?", "Did the Storm Hit ${client.market}?", "Selling Your Home Soon?", "HOMEOWNER ALERT"
+7. **Headline is the hook.** Short, specific, stops the scroll. 2-6 words max. Numbers in orange
+8. **Subhead delivers the payoff.** Yellow (#FACC15) for key proof numbers. Italic gray for context
+9. **Context line is the soft CTA.** "Free inspection. No pressure." or "We handle the insurance claim for you."
+10. **No industry jargon.** No "decking," "fascia," "soffit," "TPO," "sheathing" without plain explanation
+
+### Format
+11. **Text overlay = 4 elements only.** Qualifier, headline, subhead, context line
+12. **NO PEOPLE. EVER.** No homeowners, roofers, faces, hands, or silhouettes anywhere in any image
+13. **1:1 only.** Every image is 1080x1080 square
+14. **Key proof numbers in orange (#FF6B00).** Star ratings, "$0 out of pocket," years in business
+
+---
+
+## Banned Phrases
+
+- "Best roofer in ${client.market}" (unverifiable claim)
+- "Guaranteed lowest price" (sounds desperate)
+- "Don't wait!!!" (excessive punctuation)
+- "Limited time offer" (fake urgency)
+- "Click here" (too generic)
+- "Professional roofing services" (says nothing)
+- "Quality work" / "Great service" (meaningless without specifics)
+
+## Encouraged Language
+
+- **Insurance language**: "$0 out of pocket," "your insurance covers this," "we handle the claim from start to finish"
+- **Trust language**: specific star ratings, "family-owned," "licensed & insured," "[X] years in ${client.market}"
+- **Urgency language**: "water damage compounds," "before storm season," "a small leak becomes a $40,000 repair"
+- **Simplicity language**: "free inspection," "no pressure," "we'll handle everything," "you don't have to deal with the insurance company"
+- **Proof language**: number of roofs replaced, exact star rating, years in business, specific neighborhoods served
+
+---
+
+## WINNING AD STYLE — FOLLOW THIS EXACTLY
+
+### Structure (4 elements, top to bottom):
+1. **Qualifier badge** (top center) — filters the right homeowner and creates instant relevance. Red background for alert/warning qualifiers. Dark for neutral. Examples: "HOMEOWNER ALERT", "Is Your Roof 15+ Years Old?", "Did the Storm Hit ${client.market}?", "Selling Your Home Soon?"
+2. **Headline** (center, massive) — the hook. EXTREMELY SHORT. Mixed case (not all-caps). Bold. 2-6 words MAXIMUM. Numbers are orange and huge. End with a period. Examples: "$0 Out of Pocket.", "Free Inspection.", "Before Winter.", "Your Insurance Covers This." — if longer than 6 words, rewrite shorter
+3. **Subhead** (below headline) — the payoff or supporting punch. Yellow (#FACC15) when it's the proof number or key payoff ("4.9 Stars. 200+ Roofs. ${client.market}."). Italic gray for context ("We handle the insurance claim for you.")
+4. **Context line** (bottom, small, italic) — soft CTA or explanatory detail. "Schedule your free inspection below." or "No out-of-pocket cost for most storm damage claims."
+
+### Typography:
+- Headlines: Inter Black (weight 900), mixed case, massive. NOT uppercase. NOT condensed
+- Subhead: Inter Bold (weight 700). Yellow for payoff numbers, italic gray for context
+- Context line: Inter Regular, italic, gray (#94A3B8), centered
+- Key numbers/proof in orange (#FF6B00) within headlines
+
+### Background:
+- Dark (#0F0F0F or #111111) with warm golden/amber spotlight gradient from top
+- background_type: "warm_spotlight" for almost all ads
+- NO flat solid colors unless truly minimal concept
+- NO PEOPLE anywhere — no homeowners, roofers, or figures of any kind
+
+### Qualifier badge style:
+- Red background (#DC2626) for alert/warning qualifiers ("HOMEOWNER ALERT", "WARNING:")
+- Dark translucent with border for neutral qualifiers ("FREE INSPECTION", "Selling Soon?")
+
+---
+
+## OUTPUT FORMAT — CRITICAL
+
+You MUST return a valid JSON array of ad concept objects. No markdown, no explanation, no wrapping — ONLY the JSON array.
+
+Each object must have this exact structure:
+
+{
+  "name": "Short Concept Name",
+  "angle": "One of the 10 angles above",
+  "awareness_level": "Unaware | Problem Aware | Solution Aware | Most Aware",
+  "text_overlay": {
+    "qualifier": "HOMEOWNER ALERT",
+    "headline": "$0 Out of Pocket.",
+    "subhead": "Your insurance covers storm damage. Most homeowners don't know.",
+    "context_line": "We handle the claim from start to finish."
+  },
+  "style": {
+    "headline_accent_words": ["$0"],
+    "subhead_color": "gray | yellow | white",
+    "background_type": "warm_spotlight | gradient | solid",
+    "background_primary": "#0F0F0F",
+    "background_secondary": "#1A1A2E",
+    "qualifier_bg": "red | dark"
+  },
+  "gemini_json": {
+    "prompt": "Create a 1080x1080 square static advertisement image. Dark background with warm golden spotlight gradient from top. [Full description — NO PEOPLE OR HUMAN FIGURES.]",
+    "dimensions": { "width": 1080, "height": 1080, "aspect_ratio": "1:1" },
+    "text_elements": [
+      {
+        "type": "qualifier",
+        "text": "EXACT qualifier text",
+        "style": { "background": "#DC2626 or rgba(255,255,255,0.1)", "color": "#FFFFFF", "weight": "bold", "size": "small" },
+        "position": "top_center"
+      },
+      {
+        "type": "headline",
+        "text": "EXACT headline text",
+        "style": { "color": "#FFFFFF", "accent_color": "#FF6B00", "accent_words": ["$0"], "weight": "black", "size": "massive", "font_feel": "bold sans-serif, mixed case" },
+        "position": "center"
+      },
+      {
+        "type": "subhead",
+        "text": "EXACT subhead text",
+        "style": { "color": "#FACC15 or #94A3B8", "weight": "bold", "size": "large" },
+        "position": "below_headline"
+      },
+      {
+        "type": "context_line",
+        "text": "EXACT context line text",
+        "style": { "color": "#94A3B8", "weight": "regular", "size": "small", "font_style": "italic" },
+        "position": "bottom_center"
+      }
+    ],
+    "background": {
+      "type": "warm_spotlight",
+      "primary_color": "#0F0F0F",
+      "secondary_color": "#1A1A2E",
+      "description": "Dark background with warm golden/amber spotlight gradient from top — NO PEOPLE OR HUMAN FIGURES"
+    },
+    "constraints": [
+      "Render all text exactly as specified",
+      "1080x1080 square format",
+      "No people, faces, hands, or human figures anywhere in the image",
+      "Text must be legible and high-contrast",
+      "Warm cinematic spotlight feel, not flat"
+    ]
+  }
+}
+
+Return ONLY the JSON array. No markdown code fences. No commentary.`;
+}
+
+export function getSystemPrompt(client: RoofingClient): string {
+  if (client.type === 'quotespark') {
+    return QUOTESPARK_SYSTEM_PROMPT;
+  }
+  return buildRoofingClientPrompt(client);
+}
+
+const QUOTESPARK_SYSTEM_PROMPT = `# QuoteSpark Static Ad Generator
 
 ## Purpose
 

@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { SYSTEM_PROMPT } from '@/lib/system-prompt';
+import { getSystemPrompt } from '@/lib/system-prompt';
+import { CLIENTS } from '@/lib/clients';
 import { AdConcept, GenerateRequest } from '@/lib/types';
 
 export const maxDuration = 60;
@@ -18,9 +19,12 @@ export async function POST(request: Request) {
     });
 
     const body: GenerateRequest = await request.json();
-    const { angleFocus, proofPoints, conceptCount = 5 } = body;
+    const { clientId, angleFocus, proofPoints, conceptCount = 5 } = body;
 
-    let userMessage = `Generate ${conceptCount} ad concepts for QuoteSpark.`;
+    const client = CLIENTS.find((c) => c.id === clientId) ?? CLIENTS[0];
+    const systemPrompt = getSystemPrompt(client);
+
+    let userMessage = `Generate ${conceptCount} ad concepts for ${client.name}.`;
 
     if (angleFocus) {
       userMessage += ` Focus on this angle: ${angleFocus}.`;
@@ -37,7 +41,7 @@ export async function POST(request: Request) {
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-5-20250929',
       max_tokens: 8192,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       messages: [
         {
           role: 'user',

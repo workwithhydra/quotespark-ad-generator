@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { GenerateRequest } from '@/lib/types';
 
-const ANGLES = [
+const QUOTESPARK_ANGLES = [
   { value: '', label: 'Diversify across angles' },
   { value: 'Revenue Math — Show the exact math to $1.1M/month. Jobs x ticket x close rate. Let the numbers sell.', label: 'Revenue Math' },
   { value: 'The Ceiling / Referral Cap-Out — "Referrals got you to $400K/month. They won\'t get you to $1.1M." Name the plateau.', label: 'The Ceiling / Referral Cap-Out' },
@@ -17,12 +17,30 @@ const ANGLES = [
   { value: 'Capacity Unlock — "You have the crews. You have the closers. You don\'t have enough at-bats." Frame lead gen as unlocking capacity they already have.', label: 'Capacity Unlock' },
 ];
 
+const ROOFING_CLIENT_ANGLES = [
+  { value: '', label: 'Diversify across angles' },
+  { value: 'Storm Damage / Insurance — "$0 out of pocket. Your insurance covers this." Massive pattern interrupt for homeowners who don\'t know their policy covers storm damage.', label: 'Storm Damage / Insurance' },
+  { value: 'Roof Age — "If your roof is 15+ years old, here\'s what\'s happening right now." Educational/diagnostic angle that triggers unaware homeowners.', label: 'Roof Age (15+ Years)' },
+  { value: 'Leaking Now — Urgent repair needed. Water damage and mold compound fast. Every week they wait costs more.', label: 'Leaking Now / Urgent' },
+  { value: 'Home Value / Selling — Roof is the #1 thing buyers flag on inspection reports. Replace before listing to protect sale price.', label: 'Home Value / Selling Soon' },
+  { value: 'Free Inspection — Lowest barrier to entry. No pressure. "We\'ll tell you exactly what you have." Bring in the lead, close on the visit.', label: 'Free Inspection Offer' },
+  { value: 'Reviews / Social Proof — Real neighbors, real results. Lead with specific star rating and review count to build trust instantly.', label: 'Reviews / Social Proof' },
+  { value: 'Financing — $0 down, monthly payments. Don\'t postpone because of budget. Make the purchase decision easy.', label: 'Financing / $0 Down' },
+  { value: 'Seasonal Urgency — Before storm season / before winter. Real urgency tied to weather and timing, not manufactured scarcity.', label: 'Seasonal Urgency' },
+  { value: 'Before/After — Old roof to new roof. Simple visual proof of the transformation. Let the result sell itself.', label: 'Before / After' },
+  { value: 'Local / Family-Owned — We\'re your neighbors. Not a national chain. We stand behind our work. Trust signal vs. faceless competitors.', label: 'Local / Family-Owned' },
+];
+
 interface GenerateFormProps {
+  clientId: string;
+  clientType: 'quotespark' | 'roofing';
   onGenerate: (request: GenerateRequest) => void;
   isLoading: boolean;
 }
 
 export default function GenerateForm({
+  clientId,
+  clientType,
   onGenerate,
   isLoading,
 }: GenerateFormProps) {
@@ -30,9 +48,12 @@ export default function GenerateForm({
   const [proofPoints, setProofPoints] = useState('');
   const [conceptCount, setConceptCount] = useState(5);
 
+  const angles = clientType === 'quotespark' ? QUOTESPARK_ANGLES : ROOFING_CLIENT_ANGLES;
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     onGenerate({
+      clientId,
       angleFocus: angleFocus || undefined,
       proofPoints: proofPoints || undefined,
       conceptCount,
@@ -54,7 +75,7 @@ export default function GenerateForm({
           onChange={(e) => setAngleFocus(e.target.value)}
           className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
         >
-          {ANGLES.map((angle) => (
+          {angles.map((angle) => (
             <option key={angle.label} value={angle.value}>
               {angle.label}
             </option>
@@ -74,7 +95,11 @@ export default function GenerateForm({
           id="proof"
           value={proofPoints}
           onChange={(e) => setProofPoints(e.target.value)}
-          placeholder="e.g. 847 estimates booked last month, $2.3M revenue driven for ABC Roofing..."
+          placeholder={
+            clientType === 'quotespark'
+              ? 'e.g. 847 estimates booked last month, $2.3M revenue driven for ABC Roofing...'
+              : 'e.g. replaced 12 roofs in the neighborhood last month, 4.9 stars on Google, $0 out of pocket for storm claims...'
+          }
           rows={3}
           className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
         />

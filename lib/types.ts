@@ -44,6 +44,7 @@ export interface GeminiTextElement {
 }
 
 export interface GenerateRequest {
+  clientId: string;
   angleFocus?: string;
   proofPoints?: string;
   conceptCount?: number;
