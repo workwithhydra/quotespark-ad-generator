@@ -168,6 +168,7 @@ export default function Home() {
           onAddClient={() => { setEditingClient(undefined); setShowModal(true); }}
           onEditClient={(client) => { setEditingClient(client); setShowModal(true); }}
           onDeleteClient={handleDeleteClient}
+          onImport={refreshClients}
         />
 
         <main className="flex-1 overflow-y-auto px-8 py-8">

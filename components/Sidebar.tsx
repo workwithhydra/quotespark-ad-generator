@@ -1,8 +1,11 @@
 'use client';
 
+import { useRef } from 'react';
 import { RoofingClient } from '@/lib/clients';
+import { exportClientData, importClientData } from '@/lib/client-store';
 
 interface SidebarProps {
+  onImport: () => void;
   clients: RoofingClient[];
   activeClientId: string;
   onSelect: (clientId: string) => void;
@@ -18,7 +21,25 @@ export default function Sidebar({
   onAddClient,
   onEditClient,
   onDeleteClient,
+  onImport,
 }: SidebarProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        importClientData(ev.target?.result as string);
+        onImport();
+      } catch {
+        alert('Invalid backup file.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
   function handleDelete(client: RoofingClient, e: React.MouseEvent) {
     e.stopPropagation();
     if (confirm(`Delete "${client.name}"? This cannot be undone.`)) {
@@ -89,8 +110,8 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Add client */}
-      <div className="p-3 border-t border-zinc-800">
+      {/* Bottom actions */}
+      <div className="p-3 border-t border-zinc-800 space-y-1">
         <button
           onClick={onAddClient}
           className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-colors text-sm"
@@ -98,6 +119,29 @@ export default function Sidebar({
           <span className="text-base leading-none">+</span>
           New Client
         </button>
+        <div className="flex gap-1">
+          <button
+            onClick={exportClientData}
+            title="Export all client data to JSON"
+            className="flex-1 px-3 py-1.5 rounded-lg text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800 transition-colors text-xs text-center"
+          >
+            Export
+          </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            title="Import client data from JSON backup"
+            className="flex-1 px-3 py-1.5 rounded-lg text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800 transition-colors text-xs text-center"
+          >
+            Import
+          </button>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          onChange={handleImportFile}
+          className="hidden"
+        />
       </div>
     </aside>
   );

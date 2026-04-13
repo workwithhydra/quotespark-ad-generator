@@ -59,6 +59,33 @@ export function getQuoteSpark(): RoofingClient {
   return { ...QUOTESPARK_DEFAULT, ...(overrides['quotespark'] ?? {}) };
 }
 
+// ─── Export / Import ─────────────────────────────────────────────────────────
+
+export function exportClientData(): void {
+  const data = {
+    roofing_clients: getStoredClients(),
+    client_overrides: getClientOverrides(),
+    exported_at: new Date().toISOString(),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `quotespark-clients-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export function importClientData(json: string): void {
+  const data = JSON.parse(json);
+  if (data.roofing_clients) {
+    localStorage.setItem(ROOFING_KEY, JSON.stringify(data.roofing_clients));
+  }
+  if (data.client_overrides) {
+    localStorage.setItem(OVERRIDES_KEY, JSON.stringify(data.client_overrides));
+  }
+}
+
 // ─── Utility ──────────────────────────────────────────────────────────────────
 
 export function slugify(name: string): string {
