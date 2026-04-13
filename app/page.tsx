@@ -10,10 +10,16 @@ import {
   getQuoteSpark,
   saveClientOverride,
 } from '@/lib/client-store';
+import {
+  SavedBatch,
+  getBatchesForClient,
+  saveBatch,
+} from '@/lib/batch-store';
 import GenerateForm from '@/components/GenerateForm';
 import AdGrid from '@/components/AdGrid';
 import LoadingState from '@/components/LoadingState';
 import Sidebar from '@/components/Sidebar';
+import BatchList from '@/components/BatchList';
 import AddClientModal from '@/components/AddClientModal';
 import ShipView from '@/components/ShipView';
 
@@ -28,10 +34,13 @@ export default function Home() {
   const [editingClient, setEditingClient] = useState<RoofingClient | undefined>(undefined);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
   const [showShipView, setShowShipView] = useState(false);
+  const [savedBatches, setSavedBatches] = useState<SavedBatch[]>([]);
+  const [activeBatchId, setActiveBatchId] = useState<string | null>(null);
 
   useEffect(() => {
     setQuoteSpark(getQuoteSpark());
     setRoofingClients(getStoredClients());
+    setSavedBatches(getBatchesForClient('quotespark'));
   }, []);
 
   const allClients: RoofingClient[] = quoteSpark
@@ -45,11 +54,32 @@ export default function Home() {
     setRoofingClients(getStoredClients());
   }
 
+  function loadBatchesForClient(clientId: string) {
+    setSavedBatches(getBatchesForClient(clientId));
+  }
+
   function handleClientSelect(clientId: string) {
     setActiveClientId(clientId);
     setConcepts([]);
     setError(null);
     setSelectedIndices(new Set());
+    setActiveBatchId(null);
+    loadBatchesForClient(clientId);
+  }
+
+  function handleLoadBatch(batch: SavedBatch) {
+    setConcepts(batch.concepts);
+    setActiveBatchId(batch.id);
+    setSelectedIndices(new Set());
+    setError(null);
+  }
+
+  function handleBatchDeleted(id: string) {
+    setSavedBatches((prev) => prev.filter((b) => b.id !== id));
+    if (activeBatchId === id) {
+      setConcepts([]);
+      setActiveBatchId(null);
+    }
   }
 
   function handleToggleSelect(index: number) {
@@ -106,6 +136,10 @@ export default function Home() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Generation failed');
       setConcepts(data.concepts);
+      // Auto-save this batch
+      const batch = saveBatch(activeClient!.id, activeClient!.name, data.concepts);
+      setActiveBatchId(batch.id);
+      setSavedBatches(getBatchesForClient(activeClient!.id));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
@@ -182,6 +216,13 @@ export default function Home() {
               />
             )}
           </div>
+
+          <BatchList
+            batches={savedBatches}
+            activeBatchId={activeBatchId}
+            onLoad={handleLoadBatch}
+            onDelete={handleBatchDeleted}
+          />
 
           {error && (
             <div className="mb-8 bg-red-900/30 border border-red-800 text-red-300 px-6 py-4 rounded-lg">
