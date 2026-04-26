@@ -167,6 +167,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-900 flex flex-col">
+      <div className="bg-amber-900/40 border-b border-amber-700/50 px-6 py-2 text-center text-amber-200 text-xs">
+        This tool is being migrated to <a href="https://hydra-ops.vercel.app/ads" className="underline font-medium hover:text-amber-100">hydra-ops</a> — visual ad generation, shipping, and weekly performance reports all in one place. New work should happen there.
+      </div>
       {/* Header */}
       <header className="flex-shrink-0 border-b border-zinc-800 px-6 py-4">
         <div className="flex items-center justify-between">
